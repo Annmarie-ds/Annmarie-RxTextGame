@@ -18,6 +18,7 @@ class ViewModel {
     
     //MARK: - observables
     lazy var playerNameObservable: Observable<String> = {
+        
         return playerName.asObservable()
     }()
 }

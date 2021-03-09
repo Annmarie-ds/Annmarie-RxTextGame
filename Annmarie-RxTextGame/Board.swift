@@ -6,6 +6,8 @@
 //
 
 import Foundation
+import UIKit
+
 
 let boardCellCount = 16
 
@@ -16,6 +18,7 @@ enum cellType {
     case start
     case finish
 }
+
 
 struct Position {
     var x: Int
@@ -32,4 +35,5 @@ struct Cell {
         self.active = active
         self.type = type
     }
+
 }

@@ -14,9 +14,17 @@ class GameViewController: UIViewController {
     private let disposeBag = DisposeBag()
     private var cells: Array<Cell> = []
     
+    let viewModel = ViewModel()
+    var player = Player.init(name: "", status: status.Healthy, chests: 0, position: startCoordinates)
+    
+    let numberOfRows: ClosedRange = 0...3
+    let numberOfColumns: ClosedRange = 0...3
+    var startCoordinates = Position(x: 0,y: 0)
+    var finishCoordinates = Position(x: 3,y: 3)
+    
     lazy var nameLabel: UILabel = {
         let label = UILabel()
-        label.text = "PlayerName: "
+        label.text = "Player Name: \(player.name)"
         label.textColor = UIColor.white
         label.translatesAutoresizingMaskIntoConstraints = false
         return label
@@ -24,20 +32,20 @@ class GameViewController: UIViewController {
     
     lazy var statusLabel: UILabel = {
         let label = UILabel()
-        label.text = "Status: "
+        label.text = "Status: \(status.Healthy)"
         label.textColor = UIColor.white
         label.translatesAutoresizingMaskIntoConstraints = false
         return label
     }()
     
-    lazy var discriptionLabel: UILabel = {
+    lazy var descriptionLabel: UILabel = {
         let label = UILabel()
-        label.text = ""
+        label.text = "Your current position is x: 0, y: 0"
+        label.font = label.font.withSize(20)
+        label.numberOfLines = 3
         label.textColor = UIColor.white
         return label
     }()
-    
-    // TODO: Grid
     
     lazy var upButton: UIButton = {
         let button = UIButton()
@@ -111,10 +119,24 @@ class GameViewController: UIViewController {
         return button
     }()
     
+    lazy var actionButton: UIButton = {
+        let button = UIButton()
+        button.backgroundColor = UIColor.white
+        button.setTitleColor(UIColor.black, for: .normal)
+        button.setTitle("Go", for: .normal)
+        button.titleLabel?.font = .systemFont(ofSize: 30, weight: .heavy)
+        button.layer.cornerRadius = 10
+        button.layer.masksToBounds = true
+        button.translatesAutoresizingMaskIntoConstraints = false
+        return button
+    }()
+    
     lazy var buttonStack: UIStackView = {
-        let stack = UIStackView(arrangedSubviews: [leftButton, upButton, rightButton, downButton])
+        let stack = UIStackView(arrangedSubviews: [leftButton, upButton, rightButton, downButton, actionButton])
         stack.axis = .horizontal
-        stack.distribution = .equalSpacing
+        stack.distribution = .fillProportionally
+        stack.spacing = 10
+        stack.alignment = .center
         stack.translatesAutoresizingMaskIntoConstraints = false
         return stack
     }()
@@ -127,12 +149,19 @@ class GameViewController: UIViewController {
         return stack
     }()
     
+    lazy var container: UIStackView = {
+        let stack = UIStackView(arrangedSubviews: [labelStack, descriptionLabel, buttonStack])
+        stack.axis = .vertical
+        stack.spacing = 50
+        stack.translatesAutoresizingMaskIntoConstraints = false
+        return stack
+    }()
+    
     override func viewDidLoad() {
         super.viewDidLoad()
 
         view.backgroundColor = UIColor.black
-        view.addSubview(labelStack)
-        view.addSubview(buttonStack)
+        view.addSubview(container)
         
         setupLayout()
         
@@ -165,14 +194,40 @@ class GameViewController: UIViewController {
     
     func setupLayout() {
         NSLayoutConstraint.activate([
-            labelStack.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 20),
-            labelStack.widthAnchor.constraint(equalTo: view.widthAnchor, multiplier: 0.5),
-            labelStack.leadingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leadingAnchor),
-            buttonStack.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor, constant: -50),
-            buttonStack.widthAnchor.constraint(equalTo: view.widthAnchor, multiplier: 0.5),
-            buttonStack.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: view.frame.width/4),
-            buttonStack.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: view.frame.width/4)
+            container.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 50),
+            container.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor),
+            container.leadingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leadingAnchor, constant: 10),
+            container.trailingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.trailingAnchor, constant: -10)
         ])
+    }
+    
+    func updateDescription() -> String {
+        switch self.player.position {
+        case  Position(x: 1, y: 0):
+            return "Your current position is x: 1, y: 0"
+        case Position(x: 2, y: 0):
+            return "Your current position is x: 2, y: 0"
+        case Position(x: 3, y: 0):
+            return "Your current position is x: 3, y: 0"
+        case  Position(x: 1, y: 1):
+            return "Your current position is x: 1, y: 1"
+        case Position(x: 2, y: 1):
+            return "Your current position is x: 2, y: 1"
+        case Position(x: 3, y: 1):
+            return "Your current position is x: 3, y: 1"
+        case  Position(x: 1, y: 2):
+            return "Your current position is x: 1, y: 2"
+        case Position(x: 2, y: 2):
+            return "Your current position is x: 2, y: 2"
+        case Position(x: 3, y: 2):
+            return "Your current position is x: 3, y: 2"
+        case  Position(x: 1, y: 3):
+            return "Your current position is x: 1, y: 3"
+        case Position(x: 2, y: 3):
+            return "Your current position is x: 2, y: 3"
+        case Position(x: 3, y: 3):
+            return "You have reached the finish line!"
+        }
     }
 
 }

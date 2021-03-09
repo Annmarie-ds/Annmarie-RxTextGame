@@ -54,8 +54,9 @@ class StartViewController: UIViewController {
         button.translatesAutoresizingMaskIntoConstraints = false
         button.rx.tap
             .bind {
-                print("button tapped")
-                self.navigationController?.pushViewController(self.gameVC, animated: true)
+                if self.nameTextField.text != "" {
+                    self.navigationController?.pushViewController(self.gameVC, animated: true)
+                }
             }
             .disposed(by: disposeBag)
         return button
@@ -99,6 +100,7 @@ class StartViewController: UIViewController {
             .subscribe(onNext: { (text) in
                 print(text)
                 self.nameTextField.text = text
+                self.gameVC.player.name = text
             })
             .disposed(by: disposeBag)
     }
