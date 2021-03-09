@@ -1,10 +1,10 @@
 # Annmarie-RxTextGame
  
-## Text based game
-## iOS Deployment target 14.0
-## Swift 5.0
+- Text based game
+- iOS Deployment target 14.0
+- Swift 5.0
 
-Deliverables
+## Deliverables
 On start, ask for the user name
 Update name to display the entered player name
 Update enabled/disabled state for buttons depending on what their next option is (if moving right would go no-where, the button should be disabled)
