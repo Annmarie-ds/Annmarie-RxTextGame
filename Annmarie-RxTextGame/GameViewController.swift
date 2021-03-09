@@ -138,28 +138,28 @@ class GameViewController: UIViewController {
         
         self.cells = [
             // Top Row (row = y, column = x)
-            Cell(position: Position(x: 0, y: 0), active: false, type: "start"),
-            Cell(position: Position(x: 1, y: 0), active: false, type: "path"),
-            Cell(position: Position(x: 2, y: 0), active: false, type: "path"),
-            Cell(position: Position(x: 3, y: 0), active: false, type: "path"),
+            Cell(position: Position(x: 0, y: 0), active: false, type: cellType.start),
+            Cell(position: Position(x: 1, y: 0), active: false, type: cellType.path),
+            Cell(position: Position(x: 2, y: 0), active: false, type: cellType.path),
+            Cell(position: Position(x: 3, y: 0), active: false, type: cellType.path),
             
             // Second Row
-            Cell(position: Position(x: 0, y: 1), active: false, type: "chest"),
-            Cell(position: Position(x: 1, y: 1), active: false, type: "trap"),
-            Cell(position: Position(x: 2, y: 1), active: false, type: "path"),
-            Cell(position: Position(x: 3, y: 1), active: false, type: "chest"),
+            Cell(position: Position(x: 0, y: 1), active: false, type: cellType.chest),
+            Cell(position: Position(x: 1, y: 1), active: false, type: cellType.trap),
+            Cell(position: Position(x: 2, y: 1), active: false, type: cellType.path),
+            Cell(position: Position(x: 3, y: 1), active: false, type: cellType.chest),
             
             // Third Row
-            Cell(position: Position(x: 0, y: 2), active: false, type: "path"),
-            Cell(position: Position(x: 1, y: 2), active: false, type: "chest"),
-            Cell(position: Position(x: 2, y: 2), active: false, type: "trap"),
-            Cell(position: Position(x: 3, y: 2), active: false, type: "path"),
+            Cell(position: Position(x: 0, y: 2), active: false, type: cellType.path),
+            Cell(position: Position(x: 1, y: 2), active: false, type: cellType.chest),
+            Cell(position: Position(x: 2, y: 2), active: false, type: cellType.trap),
+            Cell(position: Position(x: 3, y: 2), active: false, type: cellType.path),
             
             // Last Row
-            Cell(position: Position(x: 0, y: 3), active: false, type: "trap"),
-            Cell(position: Position(x: 1, y: 3), active: false, type: "path"),
-            Cell(position: Position(x: 2, y: 3), active: false, type: "chest"),
-            Cell(position: Position(x: 3, y: 3), active: false, type: "finish")
+            Cell(position: Position(x: 0, y: 3), active: false, type: cellType.trap),
+            Cell(position: Position(x: 1, y: 3), active: false, type: cellType.path),
+            Cell(position: Position(x: 2, y: 3), active: false, type: cellType.chest),
+            Cell(position: Position(x: 3, y: 3), active: false, type: cellType.finish)
         ]
     }
     

@@ -9,6 +9,14 @@ import Foundation
 
 let boardCellCount = 16
 
+enum cellType {
+    case path
+    case chest
+    case trap
+    case start
+    case finish
+}
+
 struct Position {
     var x: Int
     var y: Int
@@ -17,9 +25,9 @@ struct Position {
 struct Cell {
     var position: Position
     var active: Bool
-    var type: String
+    var type: cellType
     
-    init(position: Position, active: Bool, type: String) {
+    init(position: Position, active: Bool, type: cellType) {
         self.position = position
         self.active = active
         self.type = type
