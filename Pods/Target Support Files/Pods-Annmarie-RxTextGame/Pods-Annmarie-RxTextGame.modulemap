@@ -1,0 +1,6 @@
+framework module Pods_Annmarie_RxTextGame {
+  umbrella header "Pods-Annmarie-RxTextGame-umbrella.h"
+
+  export *
+  module * { export * }
+}
