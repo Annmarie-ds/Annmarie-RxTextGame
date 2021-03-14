@@ -98,9 +98,8 @@ class StartViewController: UIViewController {
     func setupBindings() {
         viewModel.playerNameObservable
             .subscribe(onNext: { (text) in
-                print(text)
                 self.nameTextField.text = text
-                self.gameVC.player.name = text
+                self.viewModel.player.name = text
             })
             .disposed(by: disposeBag)
     }

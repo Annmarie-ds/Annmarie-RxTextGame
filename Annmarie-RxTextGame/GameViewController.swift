@@ -15,7 +15,6 @@ class GameViewController: UIViewController {
     private var cells: Array<Cell> = []
     
     let viewModel = ViewModel()
-    var player = Player.init(name: "", status: status.Healthy, chests: 0, position: startCoordinates)
     
     let numberOfRows: ClosedRange = 0...3
     let numberOfColumns: ClosedRange = 0...3
@@ -24,7 +23,7 @@ class GameViewController: UIViewController {
     
     lazy var nameLabel: UILabel = {
         let label = UILabel()
-        label.text = "Player Name: \(player.name)"
+        label.text = "Player Name: \(viewModel.playerName)"
         label.textColor = UIColor.white
         label.translatesAutoresizingMaskIntoConstraints = false
         return label
@@ -32,7 +31,7 @@ class GameViewController: UIViewController {
     
     lazy var statusLabel: UILabel = {
         let label = UILabel()
-        label.text = "Status: \(status.Healthy)"
+        label.text = "Status: \(Status.Healthy)"
         label.textColor = UIColor.white
         label.translatesAutoresizingMaskIntoConstraints = false
         return label
@@ -40,10 +39,15 @@ class GameViewController: UIViewController {
     
     lazy var descriptionLabel: UILabel = {
         let label = UILabel()
-        label.text = "Your current position is x: 0, y: 0"
         label.font = label.font.withSize(20)
         label.numberOfLines = 3
         label.textColor = UIColor.white
+
+//        label.rx.text
+//            .orEmpty
+//            .bind(to: viewModel.descriptionText)
+//            .disposed(by: disposeBag)
+        
         return label
     }()
     
@@ -59,7 +63,15 @@ class GameViewController: UIViewController {
         
         button.rx.tap
             .bind {
-                print("up button tapped")
+                if self.viewModel.player.position.y > 0 {
+                    if self.viewModel.validPosition() {
+                        self.viewModel.move(direction: Direction.Up)
+                    }
+                } else {
+                    button.isEnabled = false
+                    button.backgroundColor = UIColor.lightGray
+                }
+                print(self.viewModel.player)
             }
             .disposed(by: disposeBag)
         return button
@@ -77,7 +89,16 @@ class GameViewController: UIViewController {
         
         button.rx.tap
             .bind {
-                print("down button tapped")
+                if self.viewModel.player.position.y < 3 {
+                    if self.viewModel.validPosition() {
+                        self.viewModel.move(direction: Direction.Down)
+                    }
+                } else {
+                    button.isEnabled = false
+                    button.backgroundColor = UIColor.lightGray
+                }
+
+                print(self.viewModel.player)
             }
             .disposed(by: disposeBag)
         return button
@@ -95,7 +116,16 @@ class GameViewController: UIViewController {
         
         button.rx.tap
             .bind {
-                print("left button tapped")
+                if self.viewModel.player.position.x > 0 {
+                    if self.viewModel.validPosition() {
+                        self.viewModel.move(direction: Direction.Left)
+                    }
+                } else {
+                    button.isEnabled = false
+                    button.backgroundColor = UIColor.lightGray
+                }
+
+                print(self.viewModel.player)
             }
             .disposed(by: disposeBag)
         return button
@@ -113,7 +143,16 @@ class GameViewController: UIViewController {
         
         button.rx.tap
             .bind {
-                print("right button tapped")
+                if self.viewModel.player.position.x < 3 {
+                    if self.viewModel.validPosition() {
+                        self.viewModel.move(direction: Direction.Right)
+                    }
+                } else {
+                    button.isEnabled = false
+                    button.backgroundColor = UIColor.lightGray
+                }
+                
+                print(self.viewModel.player)
             }
             .disposed(by: disposeBag)
         return button
@@ -129,6 +168,8 @@ class GameViewController: UIViewController {
         button.layer.masksToBounds = true
         button.translatesAutoresizingMaskIntoConstraints = false
         return button
+        
+        // bind to label text - print player position
     }()
     
     lazy var buttonStack: UIStackView = {
@@ -166,7 +207,7 @@ class GameViewController: UIViewController {
         setupLayout()
         
         self.cells = [
-            // Top Row (row = y, column = x)
+            // Top Row (column: x, row: y)
             Cell(position: Position(x: 0, y: 0), active: false, type: cellType.start),
             Cell(position: Position(x: 1, y: 0), active: false, type: cellType.path),
             Cell(position: Position(x: 2, y: 0), active: false, type: cellType.path),
@@ -200,34 +241,4 @@ class GameViewController: UIViewController {
             container.trailingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.trailingAnchor, constant: -10)
         ])
     }
-    
-    func updateDescription() -> String {
-        switch self.player.position {
-        case  Position(x: 1, y: 0):
-            return "Your current position is x: 1, y: 0"
-        case Position(x: 2, y: 0):
-            return "Your current position is x: 2, y: 0"
-        case Position(x: 3, y: 0):
-            return "Your current position is x: 3, y: 0"
-        case  Position(x: 1, y: 1):
-            return "Your current position is x: 1, y: 1"
-        case Position(x: 2, y: 1):
-            return "Your current position is x: 2, y: 1"
-        case Position(x: 3, y: 1):
-            return "Your current position is x: 3, y: 1"
-        case  Position(x: 1, y: 2):
-            return "Your current position is x: 1, y: 2"
-        case Position(x: 2, y: 2):
-            return "Your current position is x: 2, y: 2"
-        case Position(x: 3, y: 2):
-            return "Your current position is x: 3, y: 2"
-        case  Position(x: 1, y: 3):
-            return "Your current position is x: 1, y: 3"
-        case Position(x: 2, y: 3):
-            return "Your current position is x: 2, y: 3"
-        case Position(x: 3, y: 3):
-            return "You have reached the finish line!"
-        }
-    }
-
 }
