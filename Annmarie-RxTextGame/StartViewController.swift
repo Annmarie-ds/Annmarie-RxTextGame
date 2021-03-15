@@ -97,11 +97,16 @@ class StartViewController: UIViewController {
     
     func setupBindings() {
         viewModel.playerNameObservable
-            .subscribe(onNext: { (text) in
-                self.nameTextField.text = text
-                self.viewModel.player.name = text
+            .subscribe(on: ConcurrentDispatchQueueScheduler(qos: .background))
+            .observe(on: MainScheduler.instance)
+            .subscribe(onNext: { [weak self] text in
+                self?.nameTextField.text = text
+                self?.viewModel.player.updatePlayer(name: text, status: Status.Healthy, chests: 0, position: Position(x: 0, y: 0))
+                self?.gameVC.nameLabel.text = "Player Name: \(String(describing: self?.viewModel.player.name ?? ""))"
+                
             })
             .disposed(by: disposeBag)
+        
     }
 }
 

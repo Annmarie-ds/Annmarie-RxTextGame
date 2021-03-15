@@ -23,7 +23,6 @@ class GameViewController: UIViewController {
     
     lazy var nameLabel: UILabel = {
         let label = UILabel()
-        label.text = "Player Name: \(viewModel.playerName)"
         label.textColor = UIColor.white
         label.translatesAutoresizingMaskIntoConstraints = false
         return label
@@ -42,11 +41,12 @@ class GameViewController: UIViewController {
         label.font = label.font.withSize(20)
         label.numberOfLines = 3
         label.textColor = UIColor.white
-
-//        label.rx.text
-//            .orEmpty
-//            .bind(to: viewModel.descriptionText)
-//            .disposed(by: disposeBag)
+        
+        viewModel.descriptionTextObservable
+            .subscribe(onNext: {(text) in
+                label.text = text
+            })
+            .disposed(by: disposeBag)
         
         return label
     }()
@@ -74,6 +74,7 @@ class GameViewController: UIViewController {
                 print(self.viewModel.player)
             }
             .disposed(by: disposeBag)
+        
         return button
     }()
     
@@ -162,7 +163,7 @@ class GameViewController: UIViewController {
         let button = UIButton()
         button.backgroundColor = UIColor.white
         button.setTitleColor(UIColor.black, for: .normal)
-        button.setTitle("Go", for: .normal)
+        button.setTitle("Action", for: .normal)
         button.titleLabel?.font = .systemFont(ofSize: 30, weight: .heavy)
         button.layer.cornerRadius = 10
         button.layer.masksToBounds = true
@@ -200,10 +201,9 @@ class GameViewController: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-
+        
         view.backgroundColor = UIColor.black
         view.addSubview(container)
-        
         setupLayout()
         
         self.cells = [

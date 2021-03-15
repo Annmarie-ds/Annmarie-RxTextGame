@@ -22,12 +22,13 @@ class ViewModel {
     var player: Player = Player()
 
     //MARK: - actions
-    var playerName: PublishSubject<String> = PublishSubject()
+    var playerName: BehaviorRelay<String> = BehaviorRelay<String>(value: "")
     var playerStatus: BehaviorRelay<Status> = BehaviorRelay<Status>(value: Status.Healthy)
     var playerChests: BehaviorRelay<Int> = BehaviorRelay<Int>(value: 0)
     var descriptionText: BehaviorRelay<String> = BehaviorRelay<String>(value: "")
     
     //MARK: - observables
+    
     lazy var playerNameObservable: Observable<String> = {
         return playerName.asObservable()
     }()
