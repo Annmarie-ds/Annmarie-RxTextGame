@@ -168,9 +168,14 @@ class GameViewController: UIViewController {
         button.layer.cornerRadius = 10
         button.layer.masksToBounds = true
         button.translatesAutoresizingMaskIntoConstraints = false
-        return button
         
-        // bind to label text - print player position
+        button.rx.tap
+            .bind {
+                self.descriptionLabel.text = "Your current position is \(self.viewModel.player.position.x), \(self.viewModel.player.position.y)"
+            }
+            .disposed(by: disposeBag)
+        
+        return button
     }()
     
     lazy var buttonStack: UIStackView = {
