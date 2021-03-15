@@ -16,10 +16,13 @@ enum Direction {
     case Down
 }
 
-class ViewModel {
+class GameViewModel {
     
     let disposeBag: DisposeBag = DisposeBag()
     var player: Player = StartViewModel().player
+    
+    //MARK: - subjects
+    let selectedButton: PublishSubject<Direction> = PublishSubject()
 
     //MARK: - actions
 
@@ -28,6 +31,8 @@ class ViewModel {
     var descriptionText: BehaviorRelay<String> = BehaviorRelay<String>(value: "")
     
     //MARK: - observables
+    
+    lazy var latestPosition: BehaviorRelay<Position> = BehaviorRelay<Position>(value: Position(x: 0, y: 0))
     
     lazy var playerStatusObservable: Observable<Status> = {
         return playerStatus.asObservable()
@@ -41,6 +46,38 @@ class ViewModel {
         Observable.of(self.player)
             .map { _ in
                 return "Your current position is \(self.player.position.x), \(self.player.position.y)"
+            }
+    }()
+    
+    lazy var upButtonEnabled: Observable<Bool> = {
+        latestPosition
+            .map { position in Position(x: position.x, y: position.y - 1)}
+            .map { [weak self] newPosition -> Bool in
+                self?.validPosition(position: newPosition) ?? false
+            }
+    }()
+    
+    lazy var downButtonEnabled: Observable<Bool> = {
+        latestPosition
+            .map { position in Position(x: position.x, y: position.y + 1)}
+            .map { [weak self] newPosition -> Bool in
+                self?.validPosition(position: newPosition) ?? false
+            }
+    }()
+    
+    lazy var leftButtonEnabled: Observable<Bool> = {
+        latestPosition
+            .map { position in Position(x: position.x - 1, y: position.y)}
+            .map { [weak self] newPosition -> Bool in
+                self?.validPosition(position: newPosition) ?? false
+            }
+    }()
+    
+    lazy var rightButtonEnabled: Observable<Bool> = {
+        latestPosition
+            .map { position in Position(x: position.x + 1, y: position.y)}
+            .map { [weak self] newPosition -> Bool in
+                self?.validPosition(position: newPosition) ?? false
             }
     }()
     
@@ -67,12 +104,12 @@ class ViewModel {
         }
     }
     
-    func updateStatus() {
-        switch self.player.status {
+    func updateStatus(player: Player) {
+        switch player.status {
         case .Healthy:
-            self.player.status = Status.Injured
+            self.player.updatePlayer(name: player.name, status: Status.Injured, chests: player.chests, position: player.position)
         case .Injured:
-            self.player.status = Status.Dead
+            self.player.updatePlayer(name: player.name, status: Status.Dead, chests: player.chests, position: player.position)
             // game over
         default:
             break

@@ -14,7 +14,7 @@ class GameViewController: UIViewController {
     private let disposeBag = DisposeBag()
     private var cells: Array<Cell> = []
     
-    let viewModel = ViewModel()
+    let viewModel = GameViewModel()
     
     let numberOfRows: ClosedRange = 0...3
     let numberOfColumns: ClosedRange = 0...3
@@ -59,12 +59,7 @@ class GameViewController: UIViewController {
         button.layer.cornerRadius = 10
         button.layer.masksToBounds = true
         button.translatesAutoresizingMaskIntoConstraints = false
-        if viewModel.player.position.y == 0 {
-            button.backgroundColor = UIColor.gray
-        } else {
-            button.backgroundColor = UIColor.white
-        }
-
+        
         button.rx.tap
             .bind {
                 if self.viewModel.player.position.y > 0 {
@@ -72,6 +67,20 @@ class GameViewController: UIViewController {
                 }
                 print(self.viewModel.player)
             }
+            .disposed(by: disposeBag)
+        
+        viewModel.upButtonEnabled
+            .bind(to: button.rx.isEnabled)
+            .disposed(by: disposeBag)
+        
+        viewModel.upButtonEnabled
+            .subscribe(onNext: { boolean in
+                if boolean == true {
+                    button.backgroundColor = UIColor.white
+                } else {
+                    button.backgroundColor = UIColor.gray
+                }
+            })
             .disposed(by: disposeBag)
         
         return button
@@ -86,12 +95,6 @@ class GameViewController: UIViewController {
         button.layer.masksToBounds = true
         button.translatesAutoresizingMaskIntoConstraints = false
         
-        if viewModel.player.position.y == 3 {
-            button.backgroundColor = UIColor.gray
-        } else {
-            button.backgroundColor = UIColor.white
-        }
-        
         button.rx.tap
             .bind {
                 if self.viewModel.player.position.y < 3 {
@@ -100,6 +103,21 @@ class GameViewController: UIViewController {
                 print(self.viewModel.player)
             }
             .disposed(by: disposeBag)
+        
+        viewModel.downButtonEnabled
+            .bind(to: button.rx.isEnabled)
+            .disposed(by: disposeBag)
+        
+        viewModel.downButtonEnabled
+            .subscribe(onNext: { boolean in
+                if boolean == true {
+                    button.backgroundColor = UIColor.white
+                } else {
+                    button.backgroundColor = UIColor.gray
+                }
+            })
+            .disposed(by: disposeBag)
+        
         return button
     }()
     
@@ -111,12 +129,6 @@ class GameViewController: UIViewController {
         button.layer.cornerRadius = 10
         button.layer.masksToBounds = true
         button.translatesAutoresizingMaskIntoConstraints = false
-
-        if viewModel.player.position.x == 0 {
-            button.backgroundColor = UIColor.gray
-        } else {
-            button.backgroundColor = UIColor.white
-        }
         
         button.rx.tap
             .bind {
@@ -127,6 +139,21 @@ class GameViewController: UIViewController {
                 print(self.viewModel.player)
             }
             .disposed(by: disposeBag)
+        
+        viewModel.leftButtonEnabled
+            .bind(to: button.rx.isEnabled)
+            .disposed(by: disposeBag)
+        
+        viewModel.leftButtonEnabled
+            .subscribe(onNext: { boolean in
+                if boolean == true {
+                    button.backgroundColor = UIColor.white
+                } else {
+                    button.backgroundColor = UIColor.gray
+                }
+            })
+            .disposed(by: disposeBag)
+        
         return button
     }()
     
@@ -139,12 +166,6 @@ class GameViewController: UIViewController {
         button.layer.masksToBounds = true
         button.translatesAutoresizingMaskIntoConstraints = false
         
-        if viewModel.player.position.x == 3 {
-            button.backgroundColor = UIColor.gray
-        } else {
-            button.backgroundColor = UIColor.white
-        }
-        
         button.rx.tap
             .bind {
                 if self.viewModel.player.position.x < 3 {
@@ -152,6 +173,20 @@ class GameViewController: UIViewController {
                 }
                 print(self.viewModel.player)
             }
+            .disposed(by: disposeBag)
+        
+        viewModel.rightButtonEnabled
+            .bind(to: button.rx.isEnabled)
+            .disposed(by: disposeBag)
+        
+        viewModel.rightButtonEnabled
+            .subscribe(onNext: { boolean in
+                if boolean == true {
+                    button.backgroundColor = UIColor.white
+                } else {
+                    button.backgroundColor = UIColor.gray
+                }
+            })
             .disposed(by: disposeBag)
 
         return button
