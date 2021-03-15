@@ -10,7 +10,7 @@ import RxSwift
 import RxCocoa
 
 class StartViewController: UIViewController {
-    let viewModel = ViewModel()
+    let viewModel = StartViewModel()
     let gameVC = GameViewController()
     let disposeBag = DisposeBag()
     
@@ -103,7 +103,6 @@ class StartViewController: UIViewController {
                 self?.nameTextField.text = text
                 self?.viewModel.player.updatePlayer(name: text, status: Status.Healthy, chests: 0, position: Position(x: 0, y: 0))
                 self?.gameVC.nameLabel.text = "Player Name: \(String(describing: self?.viewModel.player.name ?? ""))"
-                
             })
             .disposed(by: disposeBag)
         

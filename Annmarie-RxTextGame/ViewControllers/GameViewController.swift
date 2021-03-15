@@ -53,23 +53,22 @@ class GameViewController: UIViewController {
     
     lazy var upButton: UIButton = {
         let button = UIButton()
-        button.backgroundColor = UIColor.white
         button.setTitleColor(UIColor.black, for: .normal)
         button.setTitle("↑", for: .normal)
         button.titleLabel?.font = .systemFont(ofSize: 30, weight: .heavy)
         button.layer.cornerRadius = 10
         button.layer.masksToBounds = true
         button.translatesAutoresizingMaskIntoConstraints = false
-        
+        if viewModel.player.position.y == 0 {
+            button.backgroundColor = UIColor.gray
+        } else {
+            button.backgroundColor = UIColor.white
+        }
+
         button.rx.tap
             .bind {
                 if self.viewModel.player.position.y > 0 {
-                    if self.viewModel.validPosition() {
-                        self.viewModel.move(direction: Direction.Up)
-                    }
-                } else {
-                    button.isEnabled = false
-                    button.backgroundColor = UIColor.lightGray
+                    self.viewModel.move(direction: Direction.Up)
                 }
                 print(self.viewModel.player)
             }
@@ -80,7 +79,6 @@ class GameViewController: UIViewController {
     
     lazy var downButton: UIButton = {
         let button = UIButton()
-        button.backgroundColor = UIColor.white
         button.setTitleColor(UIColor.black, for: .normal)
         button.setTitle("↓", for: .normal)
         button.titleLabel?.font = .systemFont(ofSize: 30, weight: .heavy)
@@ -88,17 +86,17 @@ class GameViewController: UIViewController {
         button.layer.masksToBounds = true
         button.translatesAutoresizingMaskIntoConstraints = false
         
+        if viewModel.player.position.y == 3 {
+            button.backgroundColor = UIColor.gray
+        } else {
+            button.backgroundColor = UIColor.white
+        }
+        
         button.rx.tap
             .bind {
                 if self.viewModel.player.position.y < 3 {
-                    if self.viewModel.validPosition() {
-                        self.viewModel.move(direction: Direction.Down)
-                    }
-                } else {
-                    button.isEnabled = false
-                    button.backgroundColor = UIColor.lightGray
+                    self.viewModel.move(direction: Direction.Down)
                 }
-
                 print(self.viewModel.player)
             }
             .disposed(by: disposeBag)
@@ -107,25 +105,25 @@ class GameViewController: UIViewController {
     
     lazy var leftButton: UIButton = {
         let button = UIButton()
-        button.backgroundColor = UIColor.white
         button.setTitleColor(UIColor.black, for: .normal)
         button.setTitle("←", for: .normal)
         button.titleLabel?.font = .systemFont(ofSize: 30, weight: .heavy)
         button.layer.cornerRadius = 10
         button.layer.masksToBounds = true
         button.translatesAutoresizingMaskIntoConstraints = false
+
+        if viewModel.player.position.x == 0 {
+            button.backgroundColor = UIColor.gray
+        } else {
+            button.backgroundColor = UIColor.white
+        }
         
         button.rx.tap
             .bind {
                 if self.viewModel.player.position.x > 0 {
-                    if self.viewModel.validPosition() {
-                        self.viewModel.move(direction: Direction.Left)
-                    }
-                } else {
-                    button.isEnabled = false
-                    button.backgroundColor = UIColor.lightGray
+                    self.viewModel.move(direction: Direction.Left)
+                    self.viewModel.getChest(player: self.viewModel.player)
                 }
-
                 print(self.viewModel.player)
             }
             .disposed(by: disposeBag)
@@ -134,7 +132,6 @@ class GameViewController: UIViewController {
     
     lazy var rightButton: UIButton = {
         let button = UIButton()
-        button.backgroundColor = UIColor.white
         button.setTitleColor(UIColor.black, for: .normal)
         button.setTitle("→", for: .normal)
         button.titleLabel?.font = .systemFont(ofSize: 30, weight: .heavy)
@@ -142,20 +139,21 @@ class GameViewController: UIViewController {
         button.layer.masksToBounds = true
         button.translatesAutoresizingMaskIntoConstraints = false
         
+        if viewModel.player.position.x == 3 {
+            button.backgroundColor = UIColor.gray
+        } else {
+            button.backgroundColor = UIColor.white
+        }
+        
         button.rx.tap
             .bind {
                 if self.viewModel.player.position.x < 3 {
-                    if self.viewModel.validPosition() {
-                        self.viewModel.move(direction: Direction.Right)
-                    }
-                } else {
-                    button.isEnabled = false
-                    button.backgroundColor = UIColor.lightGray
+                    self.viewModel.move(direction: Direction.Right)
                 }
-                
                 print(self.viewModel.player)
             }
             .disposed(by: disposeBag)
+
         return button
     }()
     
@@ -213,28 +211,28 @@ class GameViewController: UIViewController {
         
         self.cells = [
             // Top Row (column: x, row: y)
-            Cell(position: Position(x: 0, y: 0), active: false, type: cellType.start),
-            Cell(position: Position(x: 1, y: 0), active: false, type: cellType.path),
-            Cell(position: Position(x: 2, y: 0), active: false, type: cellType.path),
-            Cell(position: Position(x: 3, y: 0), active: false, type: cellType.path),
+            Cell(position: Position(x: 0, y: 0), type: cellType.start),
+            Cell(position: Position(x: 1, y: 0), type: cellType.path),
+            Cell(position: Position(x: 2, y: 0), type: cellType.path),
+            Cell(position: Position(x: 3, y: 0), type: cellType.path),
             
             // Second Row
-            Cell(position: Position(x: 0, y: 1), active: false, type: cellType.chest),
-            Cell(position: Position(x: 1, y: 1), active: false, type: cellType.trap),
-            Cell(position: Position(x: 2, y: 1), active: false, type: cellType.path),
-            Cell(position: Position(x: 3, y: 1), active: false, type: cellType.chest),
+            Cell(position: Position(x: 0, y: 1), type: cellType.chest),
+            Cell(position: Position(x: 1, y: 1), type: cellType.trap),
+            Cell(position: Position(x: 2, y: 1), type: cellType.path),
+            Cell(position: Position(x: 3, y: 1), type: cellType.chest),
             
             // Third Row
-            Cell(position: Position(x: 0, y: 2), active: false, type: cellType.path),
-            Cell(position: Position(x: 1, y: 2), active: false, type: cellType.chest),
-            Cell(position: Position(x: 2, y: 2), active: false, type: cellType.trap),
-            Cell(position: Position(x: 3, y: 2), active: false, type: cellType.path),
+            Cell(position: Position(x: 0, y: 2), type: cellType.path),
+            Cell(position: Position(x: 1, y: 2), type: cellType.chest),
+            Cell(position: Position(x: 2, y: 2), type: cellType.trap),
+            Cell(position: Position(x: 3, y: 2), type: cellType.path),
             
             // Last Row
-            Cell(position: Position(x: 0, y: 3), active: false, type: cellType.trap),
-            Cell(position: Position(x: 1, y: 3), active: false, type: cellType.path),
-            Cell(position: Position(x: 2, y: 3), active: false, type: cellType.chest),
-            Cell(position: Position(x: 3, y: 3), active: false, type: cellType.finish)
+            Cell(position: Position(x: 0, y: 3), type: cellType.trap),
+            Cell(position: Position(x: 1, y: 3), type: cellType.path),
+            Cell(position: Position(x: 2, y: 3), type: cellType.chest),
+            Cell(position: Position(x: 3, y: 3), type: cellType.finish)
         ]
     }
     

@@ -27,12 +27,10 @@ struct Position: Equatable {
 
 struct Cell {
     var position: Position
-    var active: Bool
     var type: cellType
     
-    init(position: Position, active: Bool, type: cellType) {
+    init(position: Position, type: cellType) {
         self.position = position
-        self.active = active
         self.type = type
     }
 
