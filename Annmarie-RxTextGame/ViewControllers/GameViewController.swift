@@ -12,7 +12,6 @@ import RxCocoa
 class GameViewController: UIViewController {
 
     private let disposeBag = DisposeBag()
-    private var cells: Array<Cell> = []
     
     let viewModel = GameViewModel()
     
@@ -33,6 +32,15 @@ class GameViewController: UIViewController {
         label.text = "Status: \(Status.Healthy)"
         label.textColor = UIColor.white
         label.translatesAutoresizingMaskIntoConstraints = false
+        
+        viewModel.setPlayerHealth
+            .subscribe(on: ConcurrentDispatchQueueScheduler(qos: .background))
+            .observe(on: MainScheduler.instance)
+            .subscribe(onNext: { [weak self] text in
+                label.text = "Status: \(text)"
+            })
+            .disposed(by: disposeBag)
+        
         return label
     }()
     
@@ -43,6 +51,8 @@ class GameViewController: UIViewController {
         label.textColor = UIColor.white
         
         viewModel.descriptionTextObservable
+            .subscribe(on: ConcurrentDispatchQueueScheduler(qos: .background))
+            .observe(on: MainScheduler.instance)
             .subscribe(onNext: {(text) in
                 label.text = text
             })
@@ -60,13 +70,19 @@ class GameViewController: UIViewController {
         button.layer.masksToBounds = true
         button.translatesAutoresizingMaskIntoConstraints = false
         
+//        button.rx.tap
+//            .bind {
+//                if self.viewModel.player.position.y > 0 {
+//                    self.viewModel.move(direction: Direction.Up)
+//                }
+//                print(self.viewModel.player)
+//            }
+//            .disposed(by: disposeBag)
+        
+
         button.rx.tap
-            .bind {
-                if self.viewModel.player.position.y > 0 {
-                    self.viewModel.move(direction: Direction.Up)
-                }
-                print(self.viewModel.player)
-            }
+            .map { Direction.Up }
+            .bind(to: viewModel.buttonTapped)
             .disposed(by: disposeBag)
         
         viewModel.upButtonEnabled
@@ -74,6 +90,8 @@ class GameViewController: UIViewController {
             .disposed(by: disposeBag)
         
         viewModel.upButtonEnabled
+            .subscribe(on: ConcurrentDispatchQueueScheduler(qos: .background))
+            .observe(on: MainScheduler.instance)
             .subscribe(onNext: { boolean in
                 if boolean == true {
                     button.backgroundColor = UIColor.white
@@ -96,15 +114,13 @@ class GameViewController: UIViewController {
         button.translatesAutoresizingMaskIntoConstraints = false
         
         button.rx.tap
-            .bind {
-                if self.viewModel.player.position.y < 3 {
-                    self.viewModel.move(direction: Direction.Down)
-                }
-                print(self.viewModel.player)
-            }
+            .map { Direction.Down }
+            .bind(to: viewModel.buttonTapped)
             .disposed(by: disposeBag)
         
         viewModel.downButtonEnabled
+            .subscribe(on: ConcurrentDispatchQueueScheduler(qos: .background))
+            .observe(on: MainScheduler.instance)
             .bind(to: button.rx.isEnabled)
             .disposed(by: disposeBag)
         
@@ -131,13 +147,8 @@ class GameViewController: UIViewController {
         button.translatesAutoresizingMaskIntoConstraints = false
         
         button.rx.tap
-            .bind {
-                if self.viewModel.player.position.x > 0 {
-                    self.viewModel.move(direction: Direction.Left)
-                    self.viewModel.getChest(player: self.viewModel.player)
-                }
-                print(self.viewModel.player)
-            }
+            .map { Direction.Left }
+            .bind(to: viewModel.buttonTapped)
             .disposed(by: disposeBag)
         
         viewModel.leftButtonEnabled
@@ -145,6 +156,8 @@ class GameViewController: UIViewController {
             .disposed(by: disposeBag)
         
         viewModel.leftButtonEnabled
+            .subscribe(on: ConcurrentDispatchQueueScheduler(qos: .background))
+            .observe(on: MainScheduler.instance)
             .subscribe(onNext: { boolean in
                 if boolean == true {
                     button.backgroundColor = UIColor.white
@@ -167,12 +180,8 @@ class GameViewController: UIViewController {
         button.translatesAutoresizingMaskIntoConstraints = false
         
         button.rx.tap
-            .bind {
-                if self.viewModel.player.position.x < 3 {
-                    self.viewModel.move(direction: Direction.Right)
-                }
-                print(self.viewModel.player)
-            }
+            .map { Direction.Right }
+            .bind(to: viewModel.buttonTapped)
             .disposed(by: disposeBag)
         
         viewModel.rightButtonEnabled
@@ -180,6 +189,8 @@ class GameViewController: UIViewController {
             .disposed(by: disposeBag)
         
         viewModel.rightButtonEnabled
+            .subscribe(on: ConcurrentDispatchQueueScheduler(qos: .background))
+            .observe(on: MainScheduler.instance)
             .subscribe(onNext: { boolean in
                 if boolean == true {
                     button.backgroundColor = UIColor.white
@@ -203,9 +214,8 @@ class GameViewController: UIViewController {
         button.translatesAutoresizingMaskIntoConstraints = false
         
         button.rx.tap
-            .bind {
-                self.descriptionLabel.text = "Your current position is \(self.viewModel.player.position.x), \(self.viewModel.player.position.y)"
-            }
+            .map { Direction.Action }
+            .bind(to: viewModel.buttonTapped)
             .disposed(by: disposeBag)
         
         return button
@@ -243,32 +253,6 @@ class GameViewController: UIViewController {
         view.backgroundColor = UIColor.black
         view.addSubview(container)
         setupLayout()
-        
-        self.cells = [
-            // Top Row (column: x, row: y)
-            Cell(position: Position(x: 0, y: 0), type: cellType.start),
-            Cell(position: Position(x: 1, y: 0), type: cellType.path),
-            Cell(position: Position(x: 2, y: 0), type: cellType.path),
-            Cell(position: Position(x: 3, y: 0), type: cellType.path),
-            
-            // Second Row
-            Cell(position: Position(x: 0, y: 1), type: cellType.chest),
-            Cell(position: Position(x: 1, y: 1), type: cellType.trap),
-            Cell(position: Position(x: 2, y: 1), type: cellType.path),
-            Cell(position: Position(x: 3, y: 1), type: cellType.chest),
-            
-            // Third Row
-            Cell(position: Position(x: 0, y: 2), type: cellType.path),
-            Cell(position: Position(x: 1, y: 2), type: cellType.chest),
-            Cell(position: Position(x: 2, y: 2), type: cellType.trap),
-            Cell(position: Position(x: 3, y: 2), type: cellType.path),
-            
-            // Last Row
-            Cell(position: Position(x: 0, y: 3), type: cellType.trap),
-            Cell(position: Position(x: 1, y: 3), type: cellType.path),
-            Cell(position: Position(x: 2, y: 3), type: cellType.chest),
-            Cell(position: Position(x: 3, y: 3), type: cellType.finish)
-        ]
     }
     
     func setupLayout() {

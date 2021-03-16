@@ -105,7 +105,6 @@ class StartViewController: UIViewController {
                 self?.gameVC.nameLabel.text = "Player Name: \(String(describing: self?.viewModel.player.name ?? ""))"
             })
             .disposed(by: disposeBag)
-        
     }
 }
 

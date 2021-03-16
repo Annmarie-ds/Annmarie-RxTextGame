@@ -19,7 +19,6 @@ enum cellType {
     case finish
 }
 
-
 struct Position: Equatable {
     var x: Int
     var y: Int
@@ -33,5 +32,4 @@ struct Cell {
         self.position = position
         self.type = type
     }
-
 }
