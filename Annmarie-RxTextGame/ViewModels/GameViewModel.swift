@@ -57,16 +57,10 @@ class GameViewModel {
     lazy var latestPosition: BehaviorRelay<Position> = BehaviorRelay<Position>(value: Position(x: 0, y: 0))
     
     lazy var descriptionTextObservable: Observable<String> = {
-//        Observable.of(self.player)
-//            .map { player in
-//                print("value: \(player)")
-//                return "Your current position is \(player.position.x), \(player.position.y)"
-//            }
         latestPosition
             .map { position in Position(x: position.x, y: position.y)}
             .map { value in
-                print(value)
-                return "\(value)"
+                return "Your current position is \(value)"
             }
                 
     }()
@@ -104,7 +98,7 @@ class GameViewModel {
     }()
     
     lazy var updateChest: Observable<Void> = {
-        setNewPosition
+        updatePosition
             .map { pos in
                 if self.cells[pos.x][pos.y].type == .chest {
                     self.player.updatePlayer(name: self.player.name, status: self.player.status, chests: self.player.chests + 1, position: self.player.position)
@@ -113,7 +107,7 @@ class GameViewModel {
     }()
     
     lazy var setPlayerHealth: Observable<Status> = {
-        setNewPosition
+        updatePosition
             .map { pos in
                 if self.cells[pos.x][pos.y].type == .trap {
                     self.updateStatus(player: self.player)
@@ -122,7 +116,7 @@ class GameViewModel {
             }
     }()
     
-    lazy var setNewPosition: Observable<Position> = {
+    lazy var updatePosition: Observable<Position> = {
        buttonTapped
         .withLatestFrom(latestPosition) { ($0, $1) }
         .map { button, position -> Position in
@@ -144,6 +138,20 @@ class GameViewModel {
         })
     }()
     
+    lazy var gameOver: Observable<Bool> = {
+        updatePosition
+            .filter { _ in self.player.position == Position(x: 3, y: 3) || self.player.status == Status.Dead }
+            .map { position in
+                switch self.player.status {
+                case .Dead:
+                    // reset player
+                    return true
+                default:
+                    return false
+                }
+            }
+    }()
+    
     func validPosition(position: Position) -> Bool {
         if position.x >= 0 && position.x <= 3 && position.y >= 0 && position.y <= 3 {
             return true
@@ -163,28 +171,5 @@ class GameViewModel {
             break
         }
     }
-    
-//    func move(direction: Direction) {
-//        switch direction {
-//        case .Left:
-//            if validPosition(position: player.position) {
-//                self.player.updatePlayer(name: player.name, status: player.status, chests: 0, position: Position(x: player.position.x - 1, y: player.position.y))
-//            }
-//        case .Right:
-//            if validPosition(position: player.position) {
-//                self.player.updatePlayer(name: player.name, status: player.status, chests: 0, position: Position(x: player.position.x + 1, y: player.position.y))
-//            }
-//        case .Up:
-//            if validPosition(position: player.position) {
-//                self.player.updatePlayer(name: player.name, status: player.status, chests: 0, position: Position(x: player.position.x, y: player.position.y - 1))
-//            }
-//        case .Down:
-//            if validPosition(position: player.position) {
-//                self.player.updatePlayer(name: player.name, status: player.status, chests: 0, position: Position(x: player.position.x, y: player.position.y + 1))
-//            }
-//        case .Action:
-//            <#code#>
-//        }
-//    }
 
 }

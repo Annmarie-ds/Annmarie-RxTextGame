@@ -14,11 +14,7 @@ class GameViewController: UIViewController {
     private let disposeBag = DisposeBag()
     
     let viewModel = GameViewModel()
-    
-    let numberOfRows: ClosedRange = 0...3
-    let numberOfColumns: ClosedRange = 0...3
-    var startCoordinates = Position(x: 0,y: 0)
-    var finishCoordinates = Position(x: 3,y: 3)
+    let gameOverVC = GameOverViewController()
     
     lazy var nameLabel: UILabel = {
         let label = UILabel()
@@ -262,5 +258,17 @@ class GameViewController: UIViewController {
             container.leadingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leadingAnchor, constant: 10),
             container.trailingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.trailingAnchor, constant: -10)
         ])
+    }
+    
+    func setupBindings() {
+        viewModel.gameOver
+            .subscribe(on: ConcurrentDispatchQueueScheduler(qos: .background))
+            .observe(on: MainScheduler.instance)
+            .subscribe(onNext: { boolean in
+                if boolean {
+                    self.navigationController?.pushViewController(self.gameOverVC, animated: true)
+                }
+            })
+            .disposed(by: disposeBag)
     }
 }
