@@ -138,15 +138,10 @@ class GameViewModel {
     
     lazy var gameOver: Observable<Bool> = {
         updatePosition
-            .filter { position in Position(x: position.x, y: position.y) == Position(x: 3, y: 3) || self.player.status == Status.Dead }
+            .filter { pos in Position(x: pos.x, y: pos.y) == Position(x: 3, y: 3) || self.player.status == Status.Dead }
             .map { _ in
-                switch self.player.status {
-                case .Dead:
-                    return true
-                default:
-                    return false
+                return true
                 }
-            }
     }()
     
     //MARK: - functions

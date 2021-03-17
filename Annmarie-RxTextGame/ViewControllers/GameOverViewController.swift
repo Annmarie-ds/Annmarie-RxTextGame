@@ -107,7 +107,7 @@ class GameOverViewController: UIViewController {
         view.addSubview(container)
         view.backgroundColor = UIColor.black
         setupLayout()
-        self.navigationItem.backBarButtonItem = .none
+        self.navigationItem.setHidesBackButton(true, animated: true)
     }
     
     func setupLayout() {

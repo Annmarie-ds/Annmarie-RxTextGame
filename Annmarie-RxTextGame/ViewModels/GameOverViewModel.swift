@@ -21,10 +21,10 @@ class GameOverViewModel {
     lazy var results: Observable<String> = {
         Observable.of(player)
             .map { _ in
-                if self.player?.status == .Healthy || self.player?.status == .Injured {
-                    return "GAME OVER! \nCongratulations you won!"
-                } else {
+                if self.player?.status == .Dead {
                     return "GAME OVER! \nYou died!"
+                } else {
+                    return "GAME OVER! \nCongratulations you won!"
                 }
             }
     }()

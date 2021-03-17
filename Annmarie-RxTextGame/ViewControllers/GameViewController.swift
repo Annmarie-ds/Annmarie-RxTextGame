@@ -241,6 +241,7 @@ class GameViewController: UIViewController {
         view.addSubview(container)
         setupLayout()
         setupBindings()
+        self.navigationItem.setHidesBackButton(true, animated: true)
     }
     
     func setupLayout() {

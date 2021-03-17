@@ -79,7 +79,7 @@ class StartViewController: UIViewController {
         view.addSubview(stackView)
         setupLayout()
         setupBindings()
-        self.navigationItem.backBarButtonItem = .none
+        self.navigationItem.setHidesBackButton(true, animated: true)
     }
     
     func setupLayout() {
