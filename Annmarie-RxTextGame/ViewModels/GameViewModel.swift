@@ -18,11 +18,10 @@ enum Direction {
 }
 
 class GameViewModel {
-    
-    let disposeBag: DisposeBag = DisposeBag()
+
     var player: Player = StartViewModel().player
     
-    private var cells: Array<[Cell]> = [
+    var cells: [[Cell]] = [
         // Top Row (column: x, row: y)
         [Cell(position: Position(x: 0, y: 0), type: cellType.start),
         Cell(position: Position(x: 1, y: 0), type: cellType.path),
@@ -52,17 +51,16 @@ class GameViewModel {
     let buttonTapped: PublishSubject<Direction> = PublishSubject()
     
     //MARK: - observables
-    var descriptionText: BehaviorRelay<String> = BehaviorRelay<String>(value: "")
+    //var descriptionText: BehaviorRelay<String> = BehaviorRelay<String>(value: "")
     
     lazy var latestPosition: BehaviorRelay<Position> = BehaviorRelay<Position>(value: Position(x: 0, y: 0))
     
     lazy var descriptionTextObservable: Observable<String> = {
         latestPosition
             .map { position in Position(x: position.x, y: position.y)}
-            .map { value in
+            .map { [weak self] value in
                 return "Your current position is \(value)"
             }
-                
     }()
     
     lazy var upButtonEnabled: Observable<Bool> = {
@@ -98,7 +96,7 @@ class GameViewModel {
     }()
     
     lazy var updateChest: Observable<Void> = {
-        updatePosition
+        latestPosition
             .map { pos in
                 if self.cells[pos.x][pos.y].type == .chest {
                     self.player.updatePlayer(name: self.player.name, status: self.player.status, chests: self.player.chests + 1, position: self.player.position)
@@ -107,12 +105,12 @@ class GameViewModel {
     }()
     
     lazy var setPlayerHealth: Observable<Status> = {
-        updatePosition
-            .map { pos in
-                if self.cells[pos.x][pos.y].type == .trap {
-                    self.updateStatus(player: self.player)
+        latestPosition
+            .map { [weak self] pos in
+                if self?.cells[pos.x][pos.y].type == .trap {
+                    self?.updateStatus(player: self?.player ?? Player())
                 }
-                return self.player.status
+                return self?.player.status ?? Status.Healthy
             }
     }()
     
@@ -133,18 +131,19 @@ class GameViewModel {
                 return Position(x: position.x, y: position.y)
             }
         }
-        .do(onNext: { pos in
-            self.latestPosition.accept(pos)
+        .do(onNext: { [weak self] pos in
+            if self?.validPosition(position: pos) == true {
+                self?.latestPosition.accept(pos)
+            }
         })
     }()
     
     lazy var gameOver: Observable<Bool> = {
         updatePosition
-            .filter { _ in self.player.position == Position(x: 3, y: 3) || self.player.status == Status.Dead }
-            .map { position in
+            .filter { position in Position(x: position.x, y: position.y) == Position(x: 3, y: 3) || self.player.status == Status.Dead }
+            .map { _ in
                 switch self.player.status {
                 case .Dead:
-                    // reset player
                     return true
                 default:
                     return false

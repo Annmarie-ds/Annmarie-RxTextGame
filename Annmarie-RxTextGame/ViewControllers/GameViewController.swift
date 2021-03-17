@@ -65,16 +65,6 @@ class GameViewController: UIViewController {
         button.layer.cornerRadius = 10
         button.layer.masksToBounds = true
         button.translatesAutoresizingMaskIntoConstraints = false
-        
-//        button.rx.tap
-//            .bind {
-//                if self.viewModel.player.position.y > 0 {
-//                    self.viewModel.move(direction: Direction.Up)
-//                }
-//                print(self.viewModel.player)
-//            }
-//            .disposed(by: disposeBag)
-        
 
         button.rx.tap
             .map { Direction.Up }
@@ -115,12 +105,12 @@ class GameViewController: UIViewController {
             .disposed(by: disposeBag)
         
         viewModel.downButtonEnabled
-            .subscribe(on: ConcurrentDispatchQueueScheduler(qos: .background))
-            .observe(on: MainScheduler.instance)
             .bind(to: button.rx.isEnabled)
             .disposed(by: disposeBag)
         
         viewModel.downButtonEnabled
+            .subscribe(on: ConcurrentDispatchQueueScheduler(qos: .background))
+            .observe(on: MainScheduler.instance)
             .subscribe(onNext: { boolean in
                 if boolean == true {
                     button.backgroundColor = UIColor.white
@@ -249,6 +239,7 @@ class GameViewController: UIViewController {
         view.backgroundColor = UIColor.black
         view.addSubview(container)
         setupLayout()
+        setupBindings()
     }
     
     func setupLayout() {
