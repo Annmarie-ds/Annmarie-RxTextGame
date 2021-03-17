@@ -20,6 +20,7 @@ enum Direction {
 class GameViewModel {
 
     var player: Player = StartViewModel().player
+    var chestCount: Int = 0
     
     var cells: [[Cell]] = [
         // Top Row (column: x, row: y)
@@ -93,22 +94,24 @@ class GameViewModel {
             }
     }()
     
-    lazy var updateChest: Observable<Void> = {
+    lazy var updateChestCount: Observable<Int> = {
         latestPosition
             .map { pos in
                 if self.cells[pos.x][pos.y].type == .chest {
                     self.player.updatePlayer(name: self.player.name, status: self.player.status, chests: self.player.chests + 1, position: self.player.position)
+                    self.chestCount += 1
                 }
+                return self.chestCount
             }
     }()
     
     lazy var setPlayerHealth: Observable<Status> = {
         latestPosition
-            .map { [weak self] pos in
-                if self?.cells[pos.x][pos.y].type == .trap {
-                    self?.updateStatus(player: self?.player ?? Player())
+            .map { pos in
+                if self.cells[pos.x][pos.y].type == .trap {
+                    self.updateStatus(player: self.player)
                 }
-                return self?.player.status ?? Status.Healthy
+                return self.player.status 
             }
     }()
     

@@ -15,9 +15,15 @@ class GameViewController: UIViewController {
     
     let viewModel = GameViewModel()
     let gameOverVC = GameOverViewController()
-    let gameOverVM = GameOverViewModel()
     
     lazy var nameLabel: UILabel = {
+        let label = UILabel()
+        label.textColor = UIColor.white
+        label.translatesAutoresizingMaskIntoConstraints = false
+        return label
+    }()
+    
+    lazy var chestsLabel: UILabel = {
         let label = UILabel()
         label.textColor = UIColor.white
         label.translatesAutoresizingMaskIntoConstraints = false
@@ -205,6 +211,14 @@ class GameViewController: UIViewController {
             .bind(to: viewModel.buttonTapped)
             .disposed(by: disposeBag)
         
+        viewModel.updateChestCount
+            .subscribe(on: ConcurrentDispatchQueueScheduler(qos: .background))
+            .observe(on: MainScheduler.instance)
+            .subscribe(onNext: { count in
+                self.chestsLabel.text = "Chests found: \(count)"
+            })
+            .disposed(by: disposeBag)
+        
         return button
     }()
     
@@ -219,7 +233,7 @@ class GameViewController: UIViewController {
     }()
     
     lazy var labelStack: UIStackView = {
-        let stack = UIStackView(arrangedSubviews: [nameLabel, statusLabel])
+        let stack = UIStackView(arrangedSubviews: [nameLabel, statusLabel, chestsLabel])
         stack.axis = .vertical
         stack.spacing = 10
         stack.translatesAutoresizingMaskIntoConstraints = false
@@ -254,12 +268,13 @@ class GameViewController: UIViewController {
     }
     
     func setupBindings() {
+        GameViewModel().player = self.viewModel.player
+        
         viewModel.gameOver
             .subscribe(on: ConcurrentDispatchQueueScheduler(qos: .background))
             .observe(on: MainScheduler.instance)
             .subscribe(onNext: { boolean in
                 if boolean {
-                    self.viewModel.player = self.gameOverVM.player ?? Player()
                     self.navigationController?.pushViewController(self.gameOverVC, animated: true)
                 }
             })

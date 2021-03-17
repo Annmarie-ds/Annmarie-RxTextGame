@@ -11,7 +11,7 @@ import RxCocoa
 
 class GameOverViewModel {
     
-    var player: Player?
+    var player = GameViewModel().player
     var cells: [[Cell]] = GameViewModel().cells
     
     lazy var cellsSubject: BehaviorRelay<[Cell]> = BehaviorRelay<[Cell]>(value: cells.reduce([], +))
@@ -21,7 +21,7 @@ class GameOverViewModel {
     lazy var results: Observable<String> = {
         Observable.of(player)
             .map { _ in
-                if self.player?.status == .Dead {
+                if self.player.status == .Dead {
                     return "GAME OVER! \nYou died!"
                 } else {
                     return "GAME OVER! \nCongratulations you won!"
@@ -33,7 +33,7 @@ class GameOverViewModel {
     lazy var chestScore: Observable<String> = {
         Observable.of(player)
             .map { _ in
-                return "You found \(self.player?.chests ?? 0) chests!"
+                return "You found \(self.player.chests) chests!"
             }
     }()
     
