@@ -25,7 +25,7 @@ class GameViewModel {
         // Top Row (column: x, row: y)
         [Cell(position: Position(x: 0, y: 0), type: cellType.start),
         Cell(position: Position(x: 1, y: 0), type: cellType.path),
-        Cell(position: Position(x: 2, y: 0), type: cellType.path),
+        Cell(position: Position(x: 2, y: 0), type: cellType.chest),
         Cell(position: Position(x: 3, y: 0), type: cellType.path)],
         
         // Second Row
@@ -50,9 +50,9 @@ class GameViewModel {
     //MARK: - subjects
     let buttonTapped: PublishSubject<Direction> = PublishSubject()
     
-    //MARK: - observables
-    //var descriptionText: BehaviorRelay<String> = BehaviorRelay<String>(value: "")
+    lazy var cellsSubject: BehaviorRelay<[Cell]> = BehaviorRelay<[Cell]>(value: cells.reduce([], +))
     
+    //MARK: - observables
     lazy var latestPosition: BehaviorRelay<Position> = BehaviorRelay<Position>(value: Position(x: 0, y: 0))
     
     lazy var descriptionTextObservable: Observable<String> = {
@@ -151,6 +151,45 @@ class GameViewModel {
             }
     }()
     
+    //MARK: - game over
+    
+    // results
+    lazy var results: Observable<String> = {
+        latestPosition
+            .map { _ in
+                if self.player.status == Status.Healthy || self.player.status == Status.Injured {
+                    return "GAME OVER! \nCongratulations you won!"
+                } else {
+                    return "GAME OVER! \nYou died!"
+                }
+            }
+    }()
+    
+    // chestScore
+    lazy var chestScore: Observable<String> = {
+        latestPosition
+            .map { _ in
+                return "You found \(self.player.chests) chests!"
+            }
+    }()
+    
+    
+    // totalChests
+    lazy var totalChests: Observable<String> = {
+        cellsSubject
+            .map { cell in
+                var count = 0
+                for item in cell {
+                    if item.type == cellType.chest {
+                        count += 1
+                    }
+                }
+                return "There are \(count) chests in total."
+            }
+    }()
+    
+    //MARK: - functions
+    
     func validPosition(position: Position) -> Bool {
         if position.x >= 0 && position.x <= 3 && position.y >= 0 && position.y <= 3 {
             return true
@@ -165,7 +204,6 @@ class GameViewModel {
             self.player.updatePlayer(name: player.name, status: Status.Injured, chests: player.chests, position: player.position)
         case .Injured:
             self.player.updatePlayer(name: player.name, status: Status.Dead, chests: player.chests, position: player.position)
-            // game over
         default:
             break
         }
