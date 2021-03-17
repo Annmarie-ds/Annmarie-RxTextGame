@@ -67,8 +67,33 @@ class GameOverViewController: UIViewController {
         return label
     }()
     
+    lazy var playAgainButton: UIButton = {
+        let button = UIButton()
+        button.setTitle("Play Again!", for: .normal)
+        button.setTitleColor(UIColor.black, for: .normal)
+        button.backgroundColor = UIColor.white
+        button.titleLabel?.font = .systemFont(ofSize: 30, weight: .medium)
+        button.layer.cornerRadius = 10
+        button.layer.masksToBounds = true
+        button.translatesAutoresizingMaskIntoConstraints = false
+        
+        button.rx.tap
+            .bind(to: viewModel.playAgain)
+            .disposed(by: disposeBag)
+        
+        viewModel.playAgainTapped
+            .subscribe(on: ConcurrentDispatchQueueScheduler(qos: .background))
+            .observe(on: MainScheduler.instance)
+            .subscribe(onNext:{ [weak self] _ in
+                self?.navigationController?.pushViewController(StartViewController(), animated: true)
+            })
+            .disposed(by: disposeBag)
+        
+        return button
+    }()
+    
     lazy var container: UIStackView = {
-        let stack = UIStackView(arrangedSubviews: [resultsLabel, playerChestsScore, totalChests])
+        let stack = UIStackView(arrangedSubviews: [resultsLabel, playerChestsScore, totalChests, playAgainButton])
         stack.translatesAutoresizingMaskIntoConstraints = false
         stack.alignment = .center
         stack.axis = .vertical
@@ -82,6 +107,7 @@ class GameOverViewController: UIViewController {
         view.addSubview(container)
         view.backgroundColor = UIColor.black
         setupLayout()
+        self.navigationItem.backBarButtonItem = .none
     }
     
     func setupLayout() {

@@ -51,6 +51,8 @@ class GameViewModel {
     let buttonTapped: PublishSubject<Direction> = PublishSubject()
     
     lazy var cellsSubject: BehaviorRelay<[Cell]> = BehaviorRelay<[Cell]>(value: cells.reduce([], +))
+
+    lazy var playAgain: PublishSubject<Void> = PublishSubject()
     
     //MARK: - observables
     lazy var latestPosition: BehaviorRelay<Position> = BehaviorRelay<Position>(value: Position(x: 0, y: 0))
@@ -157,7 +159,7 @@ class GameViewModel {
     lazy var results: Observable<String> = {
         latestPosition
             .map { _ in
-                if self.player.status == Status.Healthy || self.player.status == Status.Injured {
+                if self.player.status == .Healthy || self.player.status == .Injured {
                     return "GAME OVER! \nCongratulations you won!"
                 } else {
                     return "GAME OVER! \nYou died!"
@@ -180,11 +182,20 @@ class GameViewModel {
             .map { cell in
                 var count = 0
                 for item in cell {
-                    if item.type == cellType.chest {
+                    if item.type == .chest {
                         count += 1
                     }
                 }
                 return "There are \(count) chests in total."
+            }
+    }()
+    
+    lazy var playAgainTapped: Observable<Void> = {
+        playAgain
+            .map { _ in
+                //reset player
+                self.player = Player()
+                return
             }
     }()
     
