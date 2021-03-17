@@ -12,6 +12,7 @@ import RxCocoa
 class StartViewModel {
     
     var player: Player = Player()
+
     var playerName: BehaviorRelay<String> = BehaviorRelay<String>(value: "")
 
     lazy var playerNameObservable: Observable<String> = {

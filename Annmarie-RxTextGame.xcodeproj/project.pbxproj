@@ -10,6 +10,7 @@
 		179096FDDD36B1CB06FD7A79 /* Pods_Annmarie_RxTextGame.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BF2B5BDC69184EF7D266057A /* Pods_Annmarie_RxTextGame.framework */; };
 		A01EC1F825FF1E0A002616E8 /* StartViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = A01EC1F725FF1E0A002616E8 /* StartViewModel.swift */; };
 		A01EC20126007F05002616E8 /* GameOverViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = A01EC20026007F05002616E8 /* GameOverViewController.swift */; };
+		A01EC2082601C4A1002616E8 /* GameOverViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = A01EC2072601C4A1002616E8 /* GameOverViewModel.swift */; };
 		A0B2C2FF25F1E3670077AB1F /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = A0B2C2FE25F1E3670077AB1F /* AppDelegate.swift */; };
 		A0B2C30125F1E3670077AB1F /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = A0B2C30025F1E3670077AB1F /* SceneDelegate.swift */; };
 		A0B2C30325F1E3670077AB1F /* StartViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = A0B2C30225F1E3670077AB1F /* StartViewController.swift */; };
@@ -26,6 +27,7 @@
 		9B14B03C1AFAFAF047ECFE37 /* Pods-Annmarie-RxTextGame.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Annmarie-RxTextGame.debug.xcconfig"; path = "Target Support Files/Pods-Annmarie-RxTextGame/Pods-Annmarie-RxTextGame.debug.xcconfig"; sourceTree = "<group>"; };
 		A01EC1F725FF1E0A002616E8 /* StartViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StartViewModel.swift; sourceTree = "<group>"; };
 		A01EC20026007F05002616E8 /* GameOverViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GameOverViewController.swift; sourceTree = "<group>"; };
+		A01EC2072601C4A1002616E8 /* GameOverViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GameOverViewModel.swift; sourceTree = "<group>"; };
 		A0B2C2FB25F1E3670077AB1F /* Annmarie-RxTextGame.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Annmarie-RxTextGame.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		A0B2C2FE25F1E3670077AB1F /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		A0B2C30025F1E3670077AB1F /* SceneDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SceneDelegate.swift; sourceTree = "<group>"; };
@@ -65,6 +67,7 @@
 			children = (
 				A0B2C31D25F1E8990077AB1F /* GameViewModel.swift */,
 				A01EC1F725FF1E0A002616E8 /* StartViewModel.swift */,
+				A01EC2072601C4A1002616E8 /* GameOverViewModel.swift */,
 			);
 			path = ViewModels;
 			sourceTree = "<group>";
@@ -257,6 +260,7 @@
 				A0B2C33225F7146A0077AB1F /* Board.swift in Sources */,
 				A0B2C2FF25F1E3670077AB1F /* AppDelegate.swift in Sources */,
 				A0B2C33525F728310077AB1F /* Player.swift in Sources */,
+				A01EC2082601C4A1002616E8 /* GameOverViewModel.swift in Sources */,
 				A0B2C31E25F1E8990077AB1F /* GameViewModel.swift in Sources */,
 				A0B2C30125F1E3670077AB1F /* SceneDelegate.swift in Sources */,
 				A01EC20126007F05002616E8 /* GameOverViewController.swift in Sources */,

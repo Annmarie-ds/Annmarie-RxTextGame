@@ -12,7 +12,7 @@ import RxCocoa
 class GameOverViewController: UIViewController {
 
     let disposeBag = DisposeBag()
-    let viewModel = GameViewModel()
+    let viewModel = GameOverViewModel()
     
     lazy var resultsLabel: UILabel = {
         let label = UILabel()

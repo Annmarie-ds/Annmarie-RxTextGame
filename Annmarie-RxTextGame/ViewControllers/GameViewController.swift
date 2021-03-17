@@ -15,6 +15,7 @@ class GameViewController: UIViewController {
     
     let viewModel = GameViewModel()
     let gameOverVC = GameOverViewController()
+    let gameOverVM = GameOverViewModel()
     
     lazy var nameLabel: UILabel = {
         let label = UILabel()
@@ -257,6 +258,7 @@ class GameViewController: UIViewController {
             .observe(on: MainScheduler.instance)
             .subscribe(onNext: { boolean in
                 if boolean {
+                    self.viewModel.player = self.gameOverVM.player ?? Player()
                     self.navigationController?.pushViewController(self.gameOverVC, animated: true)
                 }
             })
