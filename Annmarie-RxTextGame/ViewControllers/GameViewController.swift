@@ -23,13 +23,6 @@ class GameViewController: UIViewController {
         return label
     }()
     
-    lazy var chestsLabel: UILabel = {
-        let label = UILabel()
-        label.textColor = UIColor.white
-        label.translatesAutoresizingMaskIntoConstraints = false
-        return label
-    }()
-    
     lazy var statusLabel: UILabel = {
         let label = UILabel()
         //label.text = "Status: \(Status.Healthy)"
@@ -211,11 +204,19 @@ class GameViewController: UIViewController {
             .bind(to: viewModel.buttonTapped)
             .disposed(by: disposeBag)
         
-        viewModel.updateChestCount
+        viewModel.actionButtonEnabled
+            .bind(to: button.rx.isEnabled)
+            .disposed(by: disposeBag)
+        
+        viewModel.actionButtonEnabled
             .subscribe(on: ConcurrentDispatchQueueScheduler(qos: .background))
             .observe(on: MainScheduler.instance)
-            .subscribe(onNext: { count in
-                self.chestsLabel.text = "Chests found: \(count)"
+            .subscribe(onNext: { boolean in
+                if boolean == true {
+                    button.backgroundColor = UIColor.white
+                } else {
+                    button.backgroundColor = UIColor.gray
+                }
             })
             .disposed(by: disposeBag)
         
@@ -233,7 +234,7 @@ class GameViewController: UIViewController {
     }()
     
     lazy var labelStack: UIStackView = {
-        let stack = UIStackView(arrangedSubviews: [nameLabel, statusLabel, chestsLabel])
+        let stack = UIStackView(arrangedSubviews: [nameLabel, statusLabel])
         stack.axis = .vertical
         stack.spacing = 10
         stack.translatesAutoresizingMaskIntoConstraints = false
@@ -283,7 +284,6 @@ class GameViewController: UIViewController {
             .subscribe(on: ConcurrentDispatchQueueScheduler(qos: .background))
             .observe(on: MainScheduler.instance)
             .subscribe(onNext: { player in
-                print(player)
                 self.gameOverVC.playerChestsScore.text = "You found \(player.chests) chests!"
                 
                 if player.status == .Dead {

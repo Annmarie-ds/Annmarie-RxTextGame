@@ -20,7 +20,7 @@ enum Direction {
 class GameViewModel {
 
     var player: Player = StartViewModel().player
-    var chestCount: Int = 0
+    var chests: Int = 0
     
     var cells: [[Cell]] = [
         // Top Row (column: x, row: y)
@@ -61,7 +61,13 @@ class GameViewModel {
         latestPosition
             .map { position in Position(x: position.x, y: position.y)}
             .map { [weak self] value in
-                return "Your current position is \(value)"
+                if self?.cells[value.x][value.y].type == .chest {
+                    return "Your current position is \(value.x), \(value.y), \n you have found a chest! Click action!"
+                } else if self?.cells[value.x][value.y].type == .trap {
+                    return "Your current position is \(value.x), \(value.y), \n you fell in a trap!"
+                } else {
+                    return "Your current position is \(value.x), \(value.y)"
+                }
             }
     }()
     
@@ -97,14 +103,25 @@ class GameViewModel {
             }
     }()
     
+    lazy var actionButtonEnabled: Observable<Bool> = {
+        latestPosition
+            .map { position in Position(x: position.x, y: position.y)}
+            .map { [weak self] newPosition -> Bool in
+                if self?.cells[newPosition.x][newPosition.y].type == .chest {
+                    return true
+                } else {
+                    return false
+                }
+            }
+    }()
+    
     lazy var updateChestCount: Observable<Int> = {
         latestPosition
             .map { pos in
                 if self.cells[pos.x][pos.y].type == .chest {
-                    self.player.updatePlayer(name: self.player.name, status: self.player.status, chests: self.player.chests + 1, position: self.player.position)
-                    self.chestCount += 1
+                    self.chests += 1
                 }
-                return self.chestCount
+                return self.chests
             }
     }()
     
@@ -147,6 +164,7 @@ class GameViewModel {
                 self.player.updatePlayer(name: self.player.name, status: self.player.status, chests: self.player.chests, position: downPos)
                 return downPos
             case .Action:
+                self.player.updatePlayer(name: self.player.name, status: self.player.status, chests: self.player.chests + 1, position: position)
                 return Position(x: position.x, y: position.y)
             }
         }
