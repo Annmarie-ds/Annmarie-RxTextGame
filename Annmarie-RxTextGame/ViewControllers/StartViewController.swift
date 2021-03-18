@@ -10,7 +10,7 @@ import RxSwift
 import RxCocoa
 
 class StartViewController: UIViewController {
-    let viewModel = ViewModel()
+    let viewModel = StartViewModel()
     let gameVC = GameViewController()
     let disposeBag = DisposeBag()
     
@@ -54,8 +54,9 @@ class StartViewController: UIViewController {
         button.translatesAutoresizingMaskIntoConstraints = false
         button.rx.tap
             .bind {
-                print("button tapped")
-                self.navigationController?.pushViewController(self.gameVC, animated: true)
+                if self.nameTextField.text != "" {
+                    self.navigationController?.pushViewController(self.gameVC, animated: true)
+                }
             }
             .disposed(by: disposeBag)
         return button
@@ -78,6 +79,7 @@ class StartViewController: UIViewController {
         view.addSubview(stackView)
         setupLayout()
         setupBindings()
+        self.navigationItem.setHidesBackButton(true, animated: true)
     }
     
     func setupLayout() {
@@ -96,9 +98,12 @@ class StartViewController: UIViewController {
     
     func setupBindings() {
         viewModel.playerNameObservable
-            .subscribe(onNext: { (text) in
-                print(text)
-                self.nameTextField.text = text
+            .subscribe(on: ConcurrentDispatchQueueScheduler(qos: .background))
+            .observe(on: MainScheduler.instance)
+            .subscribe(onNext: { [weak self] text in
+                self?.nameTextField.text = text
+                self?.viewModel.player.updatePlayer(name: text, status: Status.Healthy, chests: 0, position: Position(x: 0, y: 0))
+                self?.gameVC.nameLabel.text = "Player Name: \(String(describing: self?.viewModel.player.name ?? ""))"
             })
             .disposed(by: disposeBag)
     }
