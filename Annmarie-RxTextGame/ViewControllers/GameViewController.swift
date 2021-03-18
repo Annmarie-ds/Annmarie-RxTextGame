@@ -32,7 +32,7 @@ class GameViewController: UIViewController {
     
     lazy var statusLabel: UILabel = {
         let label = UILabel()
-        label.text = "Status: \(Status.Healthy)"
+        //label.text = "Status: \(Status.Healthy)"
         label.textColor = UIColor.white
         label.translatesAutoresizingMaskIntoConstraints = false
         
@@ -268,7 +268,6 @@ class GameViewController: UIViewController {
     }
     
     func setupBindings() {
-        GameViewModel().player = self.viewModel.player
         
         viewModel.gameOver
             .subscribe(on: ConcurrentDispatchQueueScheduler(qos: .background))
@@ -279,5 +278,20 @@ class GameViewController: UIViewController {
                 }
             })
             .disposed(by: disposeBag)
+        
+        viewModel.playerUpdated
+            .subscribe(on: ConcurrentDispatchQueueScheduler(qos: .background))
+            .observe(on: MainScheduler.instance)
+            .subscribe(onNext: { player in
+                print(player)
+                self.gameOverVC.playerChestsScore.text = "You found \(player.chests) chests!"
+                
+                if player.status == .Dead {
+                    self.gameOverVC.resultsLabel.text = "GAME OVER! \nYou died!"
+                } else {
+                    self.gameOverVC.resultsLabel.text = "GAME OVER! \nCongratulations you won!"
+                }
+            })
+        .disposed(by: disposeBag)
     }
 }

@@ -13,6 +13,7 @@ class GameOverViewController: UIViewController {
 
     let disposeBag = DisposeBag()
     let viewModel = GameOverViewModel()
+    let gameVM = GameViewModel()
     
     lazy var resultsLabel: UILabel = {
         let label = UILabel()
@@ -20,14 +21,6 @@ class GameOverViewController: UIViewController {
         label.textAlignment = .center
         label.numberOfLines = 3
         label.translatesAutoresizingMaskIntoConstraints = false
-        
-        viewModel.results
-            .subscribe(on: ConcurrentDispatchQueueScheduler(qos: .background))
-            .observe(on: MainScheduler.instance)
-            .subscribe(onNext: {(text) in
-                label.text = text
-            })
-            .disposed(by: disposeBag)
         
         return label
     }()
@@ -38,15 +31,7 @@ class GameOverViewController: UIViewController {
         label.textAlignment = .center
         label.textColor = UIColor.green
         label.translatesAutoresizingMaskIntoConstraints = false
-        
-        viewModel.chestScore
-            .subscribe(on: ConcurrentDispatchQueueScheduler(qos: .background))
-            .observe(on: MainScheduler.instance)
-            .subscribe(onNext: {(text) in
-                label.text = text
-            })
-            .disposed(by: disposeBag)
-
+    
         return label
     }()
     

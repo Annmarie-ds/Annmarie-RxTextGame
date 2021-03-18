@@ -50,9 +50,12 @@ class GameViewModel {
     
     //MARK: - subjects
     let buttonTapped: PublishSubject<Direction> = PublishSubject()
+    let actionButtonTapped: PublishSubject<Direction> = PublishSubject()
     
     //MARK: - observables
     lazy var latestPosition: BehaviorRelay<Position> = BehaviorRelay<Position>(value: Position(x: 0, y: 0))
+    
+    lazy var playerUpdated: BehaviorRelay<Player> = BehaviorRelay<Player>(value: Player())
     
     lazy var descriptionTextObservable: Observable<String> = {
         latestPosition
@@ -105,6 +108,13 @@ class GameViewModel {
             }
     }()
     
+    lazy var playerDetails: Observable<Player> = {
+        playerUpdated
+            .map { player in
+                return player
+            }
+    }()
+    
     lazy var setPlayerHealth: Observable<Status> = {
         latestPosition
             .map { pos in
@@ -118,16 +128,24 @@ class GameViewModel {
     lazy var updatePosition: Observable<Position> = {
        buttonTapped
         .withLatestFrom(latestPosition) { ($0, $1) }
-        .map { button, position -> Position in
-            switch button {
+        .map { direction, position -> Position in
+            switch direction {
             case .Up:
-                return Position(x: position.x, y: position.y - 1)
+                let upPos = Position(x: position.x, y: position.y - 1)
+                self.player.updatePlayer(name: self.player.name, status: self.player.status, chests: self.player.chests, position: upPos)
+                return upPos
             case .Left:
-                return Position(x: position.x - 1, y: position.y)
+                let leftPos = Position(x: position.x - 1, y: position.y)
+                self.player.updatePlayer(name: self.player.name, status: self.player.status, chests: self.player.chests, position: leftPos)
+                return leftPos
             case .Right:
-                return Position(x: position.x + 1, y: position.y)
+                let rightPos = Position(x: position.x + 1, y: position.y)
+                self.player.updatePlayer(name: self.player.name, status: self.player.status, chests: self.player.chests, position: rightPos)
+                return rightPos
             case .Down:
-                return Position(x: position.x, y: position.y + 1)
+                let downPos = Position(x: position.x, y: position.y + 1)
+                self.player.updatePlayer(name: self.player.name, status: self.player.status, chests: self.player.chests, position: downPos)
+                return downPos
             case .Action:
                 return Position(x: position.x, y: position.y)
             }
@@ -135,6 +153,7 @@ class GameViewModel {
         .do(onNext: { [weak self] pos in
             if self?.validPosition(position: pos) == true {
                 self?.latestPosition.accept(pos)
+                self?.playerUpdated.accept(self?.player ?? Player())
             }
         })
     }()

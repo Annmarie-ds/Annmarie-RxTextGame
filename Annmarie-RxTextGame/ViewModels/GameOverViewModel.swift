@@ -17,25 +17,25 @@ class GameOverViewModel {
     lazy var cellsSubject: BehaviorRelay<[Cell]> = BehaviorRelay<[Cell]>(value: cells.reduce([], +))
     lazy var playAgain: PublishSubject<Void> = PublishSubject()
     
-    // results
-    lazy var results: Observable<String> = {
-        Observable.of(player)
-            .map { _ in
-                if self.player.status == .Dead {
-                    return "GAME OVER! \nYou died!"
-                } else {
-                    return "GAME OVER! \nCongratulations you won!"
-                }
-            }
-    }()
-    
-    // chestScore
-    lazy var chestScore: Observable<String> = {
-        Observable.of(player)
-            .map { _ in
-                return "You found \(self.player.chests) chests!"
-            }
-    }()
+//    // results
+//    lazy var results: Observable<String> = {
+//        Observable.of(player)
+//            .map { _ in
+//                if self.player.status == .Dead {
+//                    return "GAME OVER! \nYou died!"
+//                } else {
+//                    return "GAME OVER! \nCongratulations you won!"
+//                }
+//            }
+//    }()
+//    
+//    // chestScore
+//    lazy var chestScore: Observable<String> = {
+//        Observable.of(player)
+//            .map { _ in
+//                return "You found \(self.player.chests) chests!"
+//            }
+//    }()
     
     
     // totalChests
