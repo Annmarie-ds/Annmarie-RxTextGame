@@ -11,7 +11,7 @@ import RxCocoa
 
 class GameOverViewModel {
     
-    var player = GameViewModel().player
+    var player: Player?
     var cells: [[Cell]] = GameViewModel().cells
     
     lazy var cellsSubject: BehaviorRelay<[Cell]> = BehaviorRelay<[Cell]>(value: cells.reduce([], +))

@@ -50,7 +50,6 @@ class GameViewModel {
     
     //MARK: - subjects
     let buttonTapped: PublishSubject<Direction> = PublishSubject()
-    let actionButtonTapped: PublishSubject<Direction> = PublishSubject()
     
     //MARK: - observables
     lazy var latestPosition: BehaviorRelay<Position> = BehaviorRelay<Position>(value: Position(x: 0, y: 0))
@@ -62,7 +61,7 @@ class GameViewModel {
             .map { position in Position(x: position.x, y: position.y)}
             .map { [weak self] value in
                 if self?.cells[value.x][value.y].type == .chest {
-                    return "Your current position is \(value.x), \(value.y), \n you have found a chest! Click action!"
+                    return "Your current position is \(value.x), \(value.y), \n you have found a chest! Click action to collect!"
                 } else if self?.cells[value.x][value.y].type == .trap {
                     return "Your current position is \(value.x), \(value.y), \n you fell in a trap!"
                 } else {
@@ -114,6 +113,14 @@ class GameViewModel {
                 }
             }
     }()
+//    lazy var actionButtonTapped: Observable<Void> = {
+//        buttonTapped
+//            .map { direction in
+//                if direction == .Action {
+//                    // disable button on tap
+//                }
+//            }
+//    }()
     
     lazy var updateChestCount: Observable<Int> = {
         latestPosition
